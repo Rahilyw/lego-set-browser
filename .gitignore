@@ -1,0 +1,5 @@
+*.zip
+deploy_function_*/
+.env
+__pycache__/
+*.pyc
