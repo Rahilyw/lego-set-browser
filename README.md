@@ -49,6 +49,10 @@ A full-stack web app for browsing, searching, and filtering LEGO sets. Deployed 
 - Image proxy for CDN-hosted set images
 - Serverless ingest endpoint for bulk-upserting sets via HTTP POST
 
+| Browse Sets | Set Detail |
+|---|---|
+| ![Browse](ss-2.png) | ![Detail](ss-3.png) |
+
 ---
 
 ## Project Structure
