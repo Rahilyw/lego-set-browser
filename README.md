@@ -2,8 +2,6 @@
 
 A full-stack web app for browsing, searching, and filtering LEGO sets — deployed to Azure using AI-assisted infrastructure scaffolding.
 
-Built as part of Microsoft Build 2026 Lab (LAB501: *From Zero to Deployed on Azure with AI Agents*).
-
 ---
 
 ## Architecture
@@ -153,6 +151,8 @@ docker run -p 8000:8000 lego-set-browser
 | `AZURE_CLIENT_ID` | Managed Identity client ID (optional) | — |
 
 ---
+## Project Context
+| Built as part of Microsoft Build 2026 Lab (LAB501: *From Zero to Deployed on Azure with AI Agents*).|
 
 ## What I Learned
 
