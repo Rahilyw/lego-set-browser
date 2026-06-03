@@ -2,6 +2,8 @@
 
 A full-stack web app for browsing, searching, and filtering LEGO sets. Deployed to Azure using AI-assisted infrastructure scaffolding.
 
+![LEGO Vault](ss-1.png)
+
 ---
 
 ## Architecture
