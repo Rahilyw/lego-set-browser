@@ -152,7 +152,7 @@ docker run -p 8000:8000 lego-set-browser
 
 ---
 ## Project Context
-| Built as part of Microsoft Build 2026 Lab (LAB501: *From Zero to Deployed on Azure with AI Agents*).|
+Built as part of Microsoft Build 2026 Lab (LAB501: *From Zero to Deployed on Azure with AI Agents*).
 
 ## What I Learned
 
