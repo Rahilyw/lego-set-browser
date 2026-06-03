@@ -4,6 +4,8 @@ A full-stack web app for browsing, searching, and filtering LEGO sets — deploy
 
 Built as part of Microsoft Build 2026 Lab (LAB501: *From Zero to Deployed on Azure with AI Agents*).
 
+![LEGO Vault homepage](ss-1.png)
+
 ---
 
 ## Architecture
@@ -48,6 +50,10 @@ Built as part of Microsoft Build 2026 Lab (LAB501: *From Zero to Deployed on Azu
 - Featured sets homepage (sets with 2000+ pieces)
 - Image proxy for CDN-hosted set images
 - Serverless ingest endpoint for bulk-upserting sets via HTTP POST
+
+| Browse | Detail |
+|---|---|
+| ![Browse page](ss-2.png) | ![Detail page](ss-3.png) |
 
 ---
 
