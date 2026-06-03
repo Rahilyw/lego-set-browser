@@ -169,23 +169,6 @@ This project was deployed using a **three-skill chain** in GitHub Copilot CLI:
 | `azure-deploy` | Ran `azd up`, provisioned ACR + Container Apps Environment + Function App + Storage, built and pushed the Docker image, zip-deployed the function code, and wired environment variables |
 
 The Azure Skills plugin for GitHub Copilot CLI turns a single natural-language prompt into a full infrastructure provisioning and deployment pipeline — no portal, no manual ARM templates.
-
----
-
-## Security Audit
-
-After deployment, the infrastructure was audited for production readiness gaps:
-
-| Gap | Finding | Resolution |
-|---|---|---|
-| **Cosmos DB access** | Container App identity was assigned ARM-level `Cosmos DB Account Reader Role` — insufficient for data plane access | Assigned `Cosmos DB Built-in Data Reader` via `az cosmosdb sql role assignment create` |
-| **Env var injection** | `az containerapp update --set-env-vars` silently failed to persist values | Fixed via Azure Portal → Edit and Deploy → Environment Variables |
-| **ACR pull credentials** | Container App used admin credentials (username/password secret) instead of managed identity for ACR pull | Identified as a hardening gap — managed identity AcrPull role is the production pattern |
-| **VNet integration** | Container Apps Environment is on a public network | Identified as medium severity — private VNet integration recommended for production |
-| **Health probes** | Defaulted to TCP probes | HTTP probe on `/` route is more accurate for a Flask app |
-
-**Key insight:** The AI-generated deployment worked but was not production-secure out of the box. Human review caught the RBAC misconfiguration that caused the `CosmosHttpResponseError: Forbidden` 500 error in production.
-
 ---
 
 ## Project Context
