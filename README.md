@@ -157,13 +157,56 @@ docker run -p 8000:8000 lego-set-browser
 | `AZURE_CLIENT_ID` | Managed Identity client ID (optional) | — |
 
 ---
+
+## AI Skills Used
+
+This project was deployed using a **three-skill chain** in GitHub Copilot CLI:
+
+| Skill | What it did |
+|---|---|
+| `azure-prepare` | Scanned the workspace, classified the Flask app, scaffolded Bicep IaC, generated Azure Function code from a natural language description, and created `azure.yaml` for `azd` |
+| `azure-validate` | Compiled Bicep, verified Docker was running, checked Python runtime version and FC1 availability in the target region, confirmed subscription access |
+| `azure-deploy` | Ran `azd up`, provisioned ACR + Container Apps Environment + Function App + Storage, built and pushed the Docker image, zip-deployed the function code, and wired environment variables |
+
+The Azure Skills plugin for GitHub Copilot CLI turns a single natural-language prompt into a full infrastructure provisioning and deployment pipeline — no portal, no manual ARM templates.
+
+---
+
+## Security Audit
+
+After deployment, the infrastructure was audited for production readiness gaps:
+
+| Gap | Finding | Resolution |
+|---|---|---|
+| **Cosmos DB access** | Container App identity was assigned ARM-level `Cosmos DB Account Reader Role` — insufficient for data plane access | Assigned `Cosmos DB Built-in Data Reader` via `az cosmosdb sql role assignment create` |
+| **Env var injection** | `az containerapp update --set-env-vars` silently failed to persist values | Fixed via Azure Portal → Edit and Deploy → Environment Variables |
+| **ACR pull credentials** | Container App used admin credentials (username/password secret) instead of managed identity for ACR pull | Identified as a hardening gap — managed identity AcrPull role is the production pattern |
+| **VNet integration** | Container Apps Environment is on a public network | Identified as medium severity — private VNet integration recommended for production |
+| **Health probes** | Defaulted to TCP probes | HTTP probe on `/` route is more accurate for a Flask app |
+
+**Key insight:** The AI-generated deployment worked but was not production-secure out of the box. Human review caught the RBAC misconfiguration that caused the `CosmosHttpResponseError: Forbidden` 500 error in production.
+
+---
+
 ## Project Context
 Built as part of Microsoft Build 2026 Lab (LAB501: *From Zero to Deployed on Azure with AI Agents*).
 
+---
+
 ## What I Learned
 
-- Deploying containerized Python apps to Azure Container Apps using `azd`
-- Configuring passwordless Azure auth with managed identity and RBAC (no secrets)
+**Deployment & Infrastructure**
+- Deploying containerized Python apps to Azure Container Apps using `azd` and Bicep
 - Writing and deploying Azure Functions with HTTP triggers and Cosmos DB bindings
-- Using GitHub Copilot CLI to scaffold Bicep infrastructure from natural language prompts
-- Auditing AI-generated infrastructure for production security gaps (managed identity, RBAC vs keys, health probes)
+- Using GitHub Copilot CLI's `azure-prepare → azure-validate → azure-deploy` skill chain to scaffold and ship infrastructure from a single natural-language prompt
+
+**Security & Identity**
+- Configuring passwordless Azure auth with managed identity and Cosmos DB native RBAC (no connection strings or secrets)
+- The difference between ARM-level roles (e.g. `Cosmos DB Account Reader Role`) and Cosmos DB data-plane roles (e.g. `Cosmos DB Built-in Data Reader`) — and why the wrong one causes a `Forbidden` error even with a role assigned
+- Auditing AI-generated infrastructure for production security gaps
+
+**Debugging & Troubleshooting**
+- Diagnosing a `CosmosHttpResponseError: Forbidden (Sub Status: 5301)` error by streaming container logs with `az containerapp logs show --follow`
+- Identifying that `az containerapp update --set-env-vars` was silently failing to persist values by inspecting the JSON response template
+- Fixing environment variable injection through the Azure Portal when CLI commands produced unexpected results
+- Understanding why RBAC role assignment propagation delay causes 500 errors even after a role is successfully created
