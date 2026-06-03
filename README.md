@@ -1,6 +1,6 @@
 # LEGO Set Browser
 
-A full-stack web app for browsing, searching, and filtering LEGO sets — deployed to Azure using AI-assisted infrastructure scaffolding.
+A full-stack web app for browsing, searching, and filtering LEGO sets. Deployed to Azure using AI-assisted infrastructure scaffolding.
 
 ---
 
